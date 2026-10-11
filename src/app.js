@@ -5,51 +5,51 @@ const shell = window.__TAURI__.shell;
 // Supported models — mirrors the AI Studio model list. The picker shows
 // exactly these; the API's list_models only enriches names/descriptions.
 const SUPPORTED_MODELS = [
-  // Chat
-  { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', description: 'Most intelligent Flash model — long-horizon SWE, agents, complex workflows', kind: 'chat', supportsThinking: true },
-  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview', description: 'SOTA reasoning with powerful multimodal understanding and coding', kind: 'chat', supportsThinking: true },
-  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', description: 'Previous-gen Flash, balancing speed and multimodal capabilities', kind: 'chat', supportsThinking: true },
-  { id: 'gemini-3-flash-preview', name: 'Gemini 3 Flash Preview', description: 'Legacy Flash model — baseline speed and intelligence', kind: 'chat', supportsThinking: true },
-  { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', description: 'Fastest, most cost-effective 3.5 model for high-throughput execution', kind: 'chat', supportsThinking: false },
-  { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite', description: 'Most cost-efficient — high-volume agentic tasks and data processing', kind: 'chat', supportsThinking: false },
-  { id: 'gemini-flash-latest', name: 'Gemini Flash Latest', description: 'Alias pointing to the latest Flash model', kind: 'chat', supportsThinking: true },
-  { id: 'gemini-pro-latest', name: 'Gemini Pro Latest', description: 'Alias pointing to the latest Pro model', kind: 'chat', supportsThinking: true },
-  { id: 'gemini-flash-lite-latest', name: 'Gemini Flash-Lite Latest', description: 'Alias pointing to the latest Flash-Lite model', kind: 'chat', supportsThinking: false },
-  { id: 'gemma-4-31b-it', name: 'Gemma 4 31B IT', description: 'Flagship open-weight dense model, 256K context', kind: 'chat', supportsThinking: false },
-  { id: 'gemma-4-26b-a4b-it', name: 'Gemma 4 26B A4B IT', description: 'MoE model — 4B active params, cost-efficient throughput', kind: 'chat', supportsThinking: false },
+  // Chat — pricing is per 1M tokens (in/out) unless noted
+  { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', description: 'Most intelligent Flash model — long-horizon SWE, autonomous agents, complex workflows', kind: 'chat', supportsThinking: true, paid: false, isNew: true, pricing: 'In $0.75 · Out $3.75', released: 'Sep 2026' },
+  { id: 'gemini-3.1-pro-preview', name: 'Gemini 3.1 Pro Preview', description: 'SOTA reasoning with powerful multimodal understanding and coding', kind: 'chat', supportsThinking: true, paid: false, pricing: '≤200K: $2/$12 · >200K: $4/$18', released: 'Feb 2026' },
+  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', description: 'Previous-gen Flash, balancing speed and multimodal capabilities', kind: 'chat', supportsThinking: true, paid: true, pricing: 'In $0.75 · Out $3.75', released: 'Jul 2026' },
+  { id: 'gemini-3-flash-preview', name: 'Gemini 3 Flash Preview', description: 'Legacy Flash model — baseline speed and intelligence', kind: 'chat', supportsThinking: true, paid: true, pricing: 'In $0.50 · Out $3.00', released: 'Dec 2025' },
+  { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash Lite', description: 'Fastest, most cost-effective 3.5 model for high-throughput execution', kind: 'chat', supportsThinking: false, paid: false, pricing: 'In $0.30 · Out $2.50', released: 'Jul 2026' },
+  { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite', description: 'Most cost-efficient — high-volume agentic tasks and data processing', kind: 'chat', supportsThinking: false, paid: false, pricing: 'Text/img/vid $0.25/$1.50 · Audio $0.50/$1.50', released: 'May 2026' },
+  { id: 'gemini-flash-latest', name: 'Gemini Flash Latest', description: 'Alias pointing to the latest Flash model', kind: 'chat', supportsThinking: true, paid: false, isNew: true, pricing: 'Same as 3.8 Flash', released: 'Sep 2026' },
+  { id: 'gemini-pro-latest', name: 'Gemini Pro Latest', description: 'Alias pointing to the latest Pro model', kind: 'chat', supportsThinking: true, paid: false, pricing: 'Same as 3.1 Pro', released: 'Feb 2026' },
+  { id: 'gemini-flash-lite-latest', name: 'Gemini Flash-Lite Latest', description: 'Alias pointing to the latest Flash-Lite model', kind: 'chat', supportsThinking: false, paid: false, pricing: 'Same as 3.5 Flash Lite', released: 'Jul 2026' },
+  { id: 'gemma-4-31b-it', name: 'Gemma 4 31B IT', description: 'Flagship open-weight dense model, 256K context', kind: 'chat', supportsThinking: false, paid: false, pricing: 'Open weights', released: 'Apr 2026' },
+  { id: 'gemma-4-26b-a4b-it', name: 'Gemma 4 26B A4B IT', description: 'MoE model — 4B active params, cost-efficient throughput', kind: 'chat', supportsThinking: false, paid: false, pricing: 'Open weights', released: 'Apr 2026' },
   // Agents
-  { id: 'antigravity-preview-09-2026', name: 'Antigravity Agent Preview', description: 'Autonomous agent running in a Google-hosted Linux environment', kind: 'agent', supportsThinking: false },
-  { id: 'deep-research-preview-04-2026', name: 'Deep Research Preview', description: 'Long-running research agent, optimized for speed and efficiency', kind: 'agent', supportsThinking: false },
-  { id: 'deep-research-max-preview-04-2026', name: 'Deep Research Max Preview', description: 'SOTA research agent — maximum exhaustiveness and comprehensiveness', kind: 'agent', supportsThinking: false },
-  { id: 'gemini-robotics-er-2-preview', name: 'Gemini Robotics-ER 2 Preview', description: 'Embodied reasoning — spatial reasoning and multi-robot collaboration', kind: 'agent', supportsThinking: false },
-  // Image
-  { id: 'gemini-nano-banana-2.1', name: 'Nano Banana 2.1', description: 'Image generation & editing — enhanced factuality and fidelity', kind: 'image', supportsThinking: false },
-  { id: 'gemini-3-pro-image', name: 'Nano Banana Pro', description: 'State-of-the-art image generation and editing', kind: 'image', supportsThinking: false },
-  { id: 'gemini-3.1-flash-image', name: 'Nano Banana 2', description: 'Pro-level visuals with Flash-speed efficiency', kind: 'image', supportsThinking: false },
-  { id: 'gemini-3.1-flash-lite-image', name: 'Nano Banana 2 Lite', description: 'Smallest, most cost-effective image generation model', kind: 'image', supportsThinking: false },
-  { id: 'gemini-2.5-flash-image', name: 'Nano Banana', description: 'Previous-gen image generation and editing model', kind: 'image', supportsThinking: false },
+  { id: 'antigravity-preview-09-2026', name: 'Antigravity Agent Preview', description: 'Autonomous agent running in a Google-hosted Linux environment', kind: 'agent', supportsThinking: false, paid: true, pricing: 'Based on configured model', released: 'Sep 2026' },
+  { id: 'deep-research-preview-04-2026', name: 'Deep Research Preview', description: 'Long-running research agent, optimized for speed and efficiency', kind: 'agent', supportsThinking: false, paid: true, pricing: '3.1 Pro + 3 Flash pricing', released: 'Apr 2026' },
+  { id: 'deep-research-max-preview-04-2026', name: 'Deep Research Max Preview', description: 'SOTA research agent — maximum exhaustiveness and comprehensiveness', kind: 'agent', supportsThinking: false, paid: true, pricing: '3.1 Pro + 3 Flash pricing', released: 'Apr 2026' },
+  { id: 'gemini-robotics-er-2-preview', name: 'Gemini Robotics-ER 2 Preview', description: 'Embodied reasoning — spatial reasoning and multi-robot collaboration', kind: 'agent', supportsThinking: false, paid: false, pricing: 'In $2.00 · Out $10.00', released: 'Jul 2026' },
+  // Image — image output priced per image
+  { id: 'gemini-nano-banana-2.1', name: 'Nano Banana 2.1', description: 'Image generation & editing — enhanced factuality and fidelity', kind: 'image', supportsThinking: false, paid: true, isNew: true, pricing: 'Text $1.50/$7.50 · Image $0.034', released: 'Oct 2026' },
+  { id: 'gemini-3-pro-image', name: 'Nano Banana Pro', description: 'State-of-the-art image generation and editing', kind: 'image', supportsThinking: false, paid: true, pricing: 'Text $2/$12 · Image $0.134', released: 'May 2026' },
+  { id: 'gemini-3.1-flash-image', name: 'Nano Banana 2', description: 'Pro-level visuals with Flash-speed efficiency', kind: 'image', supportsThinking: false, paid: true, pricing: 'Text $0.50/$3 · Image $0.067', released: 'May 2026' },
+  { id: 'gemini-3.1-flash-lite-image', name: 'Nano Banana 2 Lite', description: 'Smallest, most cost-effective image generation model', kind: 'image', supportsThinking: false, paid: false, pricing: 'Text $0.25/$1.50 · Image $0.034', released: 'Jun 2026' },
+  { id: 'gemini-2.5-flash-image', name: 'Nano Banana', description: 'Previous-gen image generation and editing model', kind: 'image', supportsThinking: false, paid: true, pricing: 'Text $0.30/$2.50 · Image $0.039', released: 'Sep 2025' },
   // Audio
-  { id: 'gemini-3.8-flash-tts', name: 'Gemini 3.8 Flash TTS', description: 'Flagship TTS — voice design, dual-speaker screenplay control', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-3.8-flash-lite-tts', name: 'Gemini 3.8 Flash Lite TTS', description: 'High-speed TTS for dubbing, localization, voice agents', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-3.1-flash-tts-preview', name: 'Gemini 3.1 Flash TTS Preview', description: 'Low-latency speech with steerable prompts and audio tags', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-2.5-pro-preview-tts', name: 'Gemini 2.5 Pro TTS', description: '2.5 Pro TTS — powerful, natural, easy to steer', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-2.5-flash-preview-tts', name: 'Gemini 2.5 Flash TTS', description: 'Price-performant, low-latency controllable speech', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-3.5-transcribe', name: 'Gemini 3.5 Transcribe', description: 'High-accuracy speech-to-text with rich archival metadata', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-3.5-transcribe-live', name: 'Gemini 3.5 Transcribe Live', description: 'Ultra-low latency real-time streaming transcription', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-3.8-live', name: 'Gemini 3.8 Live', description: 'Low-latency real-time dialogue with background async tools', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-3.8-live-extended-thinking', name: 'Gemini 3.8 Live Ext. Thinking', description: 'Live dialogue with in-depth reasoning and verbal cues', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-3.1-flash-live-preview', name: 'Gemini 3.1 Flash Live Preview', description: 'Audio-to-audio real-time dialogue with acoustic nuance', kind: 'audio', supportsThinking: false },
-  { id: 'gemini-3.5-live-translate-preview', name: 'Gemini 3.5 Live Translate', description: 'Real-time speech-to-speech translation for 70+ languages', kind: 'audio', supportsThinking: false },
-  { id: 'lyria-3.5', name: 'Lyria 3.5', description: 'Full-song generation with enhanced vocal clarity', kind: 'audio', supportsThinking: false },
-  { id: 'lyria-3-pro-preview', name: 'Lyria 3 Pro Preview', description: 'Advanced music generation with structural control', kind: 'audio', supportsThinking: false },
-  { id: 'lyria-3-clip-preview', name: 'Lyria 3 Clip Preview', description: 'Low-latency, high-fidelity music clip generation', kind: 'audio', supportsThinking: false },
+  { id: 'gemini-3.8-flash-tts', name: 'Gemini 3.8 Flash TTS', description: 'Flagship TTS — voice design, dual-speaker screenplay control', kind: 'audio', supportsThinking: false, paid: false, isNew: true, pricing: 'Text→Audio $0.50/$9.00', released: 'Sep 2026' },
+  { id: 'gemini-3.8-flash-lite-tts', name: 'Gemini 3.8 Flash Lite TTS', description: 'High-speed TTS for dubbing, localization, voice agents', kind: 'audio', supportsThinking: false, paid: false, pricing: 'Text→Audio $0.50/$6.00', released: 'Sep 2026' },
+  { id: 'gemini-3.1-flash-tts-preview', name: 'Gemini 3.1 Flash TTS Preview', description: 'Low-latency speech with steerable prompts and audio tags', kind: 'audio', supportsThinking: false, paid: false, pricing: 'In $1.00 · Out $20.00', released: 'Apr 2026' },
+  { id: 'gemini-2.5-pro-preview-tts', name: 'Gemini 2.5 Pro TTS', description: '2.5 Pro TTS — powerful, natural, easy to steer', kind: 'audio', supportsThinking: false, paid: false, pricing: 'In $1.00 · Out $20.00' },
+  { id: 'gemini-2.5-flash-preview-tts', name: 'Gemini 2.5 Flash TTS', description: 'Price-performant, low-latency controllable speech', kind: 'audio', supportsThinking: false, paid: false, pricing: 'Audio $0.50/$10.00' },
+  { id: 'gemini-3.5-transcribe', name: 'Gemini 3.5 Transcribe', description: 'High-accuracy speech-to-text with rich archival metadata', kind: 'audio', supportsThinking: false, paid: false, isNew: true, pricing: 'Audio $2.00/$12.00', released: 'Aug 2026' },
+  { id: 'gemini-3.5-transcribe-live', name: 'Gemini 3.5 Transcribe Live', description: 'Ultra-low latency real-time streaming transcription', kind: 'audio', supportsThinking: false, paid: false, isNew: true, pricing: 'Audio $3.50/$21.00', released: 'Aug 2026' },
+  { id: 'gemini-3.8-live', name: 'Gemini 3.8 Live', description: 'Low-latency real-time dialogue with background async tools', kind: 'audio', supportsThinking: false, paid: false, pricing: 'Text $0.75/$4.50 · Audio $3/$12', released: 'Sep 2026' },
+  { id: 'gemini-3.8-live-extended-thinking', name: 'Gemini 3.8 Live Ext. Thinking', description: 'Live dialogue with in-depth reasoning and verbal cues', kind: 'audio', supportsThinking: false, paid: false, pricing: 'Text $0.75/$4.50 · Audio $3/$12', released: 'Sep 2026' },
+  { id: 'gemini-3.1-flash-live-preview', name: 'Gemini 3.1 Flash Live Preview', description: 'Audio-to-audio real-time dialogue with acoustic nuance', kind: 'audio', supportsThinking: false, paid: false, pricing: 'Text $0.75/$4.50 · Audio $3/$12', released: 'Mar 2026' },
+  { id: 'gemini-3.5-live-translate-preview', name: 'Gemini 3.5 Live Translate', description: 'Real-time speech-to-speech translation for 70+ languages', kind: 'audio', supportsThinking: false, paid: false, pricing: 'Audio $3.50/$21.00', released: 'Jun 2026' },
+  { id: 'lyria-3.5', name: 'Lyria 3.5', description: 'Full-song generation with enhanced vocal clarity', kind: 'audio', supportsThinking: false, paid: true, pricing: '$0.08 / song', released: 'Sep 2026' },
+  { id: 'lyria-3-pro-preview', name: 'Lyria 3 Pro Preview', description: 'Advanced music generation with structural control', kind: 'audio', supportsThinking: false, paid: true, pricing: '$0.08 / song', released: 'Mar 2026' },
+  { id: 'lyria-3-clip-preview', name: 'Lyria 3 Clip Preview', description: 'Low-latency, high-fidelity music clip generation', kind: 'audio', supportsThinking: false, paid: true, pricing: '$0.04 / clip', released: 'Mar 2026' },
   // Video
-  { id: 'gemini-omni-1.1-flash', name: 'Gemini Omni 1.1 Flash', description: 'Generative video — keyframe control, scene extension, 4K upscale', kind: 'video', supportsThinking: false },
-  { id: 'gemini-omni-flash-preview', name: 'Gemini Omni Flash Preview', description: 'Video generation and conversational editing', kind: 'video', supportsThinking: false },
-  { id: 'veo-3.1-generate-preview', name: 'Veo 3.1', description: 'Latest video generation model — 720p/1080p/4K', kind: 'video', supportsThinking: false },
-  { id: 'veo-3.1-fast-generate-preview', name: 'Veo 3.1 Fast', description: 'Faster Veo, optimized for business use', kind: 'video', supportsThinking: false },
-  { id: 'veo-3.1-lite-generate-preview', name: 'Veo 3.1 Lite', description: 'Most cost-efficient video generation model', kind: 'video', supportsThinking: false },
-  { id: 'gemini-robotics-er-2-streaming-preview', name: 'Gemini Robotics-ER 2 Streaming', description: 'Real-time embodied reasoning and text streaming', kind: 'video', supportsThinking: false },
+  { id: 'gemini-omni-1.1-flash', name: 'Gemini Omni 1.1 Flash', description: 'Generative video — keyframe control, scene extension, 4K upscale', kind: 'video', supportsThinking: false, paid: true, isNew: true, pricing: 'T/A/V $1.50/$9 · Video out $17.50', released: 'Aug 2026' },
+  { id: 'gemini-omni-flash-preview', name: 'Gemini Omni Flash Preview', description: 'Video generation and conversational editing', kind: 'video', supportsThinking: false, paid: true, pricing: 'T/A/V $1.50/$9 · Video out $17.50', released: 'Jun 2026' },
+  { id: 'veo-3.1-generate-preview', name: 'Veo 3.1', description: 'Latest video generation model — 720p/1080p/4K', kind: 'video', supportsThinking: false, paid: true, pricing: '$0.40/s 720p–1080p · $0.60/s 4K' },
+  { id: 'veo-3.1-fast-generate-preview', name: 'Veo 3.1 Fast', description: 'Faster Veo, optimized for business use', kind: 'video', supportsThinking: false, paid: true, pricing: '$0.10/s 720p · $0.12/s 1080p · $0.30/s 4K' },
+  { id: 'veo-3.1-lite-generate-preview', name: 'Veo 3.1 Lite', description: 'Most cost-efficient video generation model', kind: 'video', supportsThinking: false, paid: true, pricing: '$0.05/s 720p · $0.08/s 1080p', released: 'Mar 2026' },
+  { id: 'gemini-robotics-er-2-streaming-preview', name: 'Gemini Robotics-ER 2 Streaming', description: 'Real-time embodied reasoning and text streaming', kind: 'video', supportsThinking: false, paid: false, pricing: 'In $2.00 · Out $10.00', released: 'Jul 2026' },
 ];
 
 const state = {
@@ -133,21 +133,23 @@ function activeChat() {
   return state.chats.find((c) => c.id === state.activeChatId) || null;
 }
 
-function renderMarkdown(text) {
+function renderMarkdown(text, highlight = true) {
   const html = marked.parse(text || '', { breaks: true, gfm: true });
   const tmp = document.createElement('div');
   tmp.innerHTML = html;
   tmp.querySelectorAll('pre code').forEach((code) => {
     const match = code.className.match(/language-([\w+-]+)/);
     const lang = match && match[1];
-    try {
-      if (lang && hljs.getLanguage(lang)) {
-        code.innerHTML = hljs.highlight(code.textContent, { language: lang }).value;
-      } else {
-        code.innerHTML = hljs.highlightAuto(code.textContent).value;
-      }
-      code.classList.add('hljs');
-    } catch { /* leave unhighlighted */ }
+    if (highlight) {
+      try {
+        if (lang && hljs.getLanguage(lang)) {
+          code.innerHTML = hljs.highlight(code.textContent, { language: lang }).value;
+        } else {
+          code.innerHTML = hljs.highlightAuto(code.textContent).value;
+        }
+        code.classList.add('hljs');
+      } catch { /* leave unhighlighted */ }
+    }
 
     const pre = code.parentElement;
     const wrapper = document.createElement('div');
@@ -178,6 +180,7 @@ async function copyText(text, btn) {
     document.execCommand('copy');
     ta.remove();
   }
+  toast('Copied to clipboard', 1500);
   if (btn) {
     const old = btn.textContent;
     btn.textContent = 'Copied';
@@ -243,12 +246,17 @@ function renderMessages() {
   scrollToBottom(true);
 }
 
-function thoughtBlockEl(thought, open) {
+function thoughtBlockEl(thought, streaming) {
   const details = document.createElement('details');
   details.className = 'thought-block';
-  if (open) details.open = true;
   const summary = document.createElement('summary');
-  summary.textContent = open ? 'Thinking…' : 'Show thinking';
+  const label = document.createElement('span');
+  label.className = 'th-label';
+  label.textContent = streaming ? 'Thinking…' : 'Thought process';
+  const chev = document.createElement('span');
+  chev.className = 'th-chev';
+  chev.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M7 10l5 5 5-5H7z"/></svg>';
+  summary.append(label, chev);
   const body = document.createElement('div');
   body.className = 'thought-body';
   body.textContent = thought;
@@ -260,7 +268,18 @@ function escapeHtml(s) {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// Batch all streaming DOM writes into one paint per frame.
+let rafPending = false;
 function updateStreamingMsg(msg) {
+  if (rafPending) return;
+  rafPending = true;
+  requestAnimationFrame(() => {
+    rafPending = false;
+    flushStreamingMsg(msg);
+  });
+}
+
+function flushStreamingMsg(msg) {
   const el = messagesEl.querySelector(`.msg[data-mid="${msg.id}"]`);
   if (!el) return;
   let bubble = el.querySelector('.model-bubble');
@@ -275,8 +294,9 @@ function updateStreamingMsg(msg) {
       bubble.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
     }
   } else {
+    // Skip syntax highlighting mid-stream — it runs once at the end.
     bubble.innerHTML = '';
-    bubble.appendChild(renderMarkdown(text));
+    bubble.appendChild(renderMarkdown(text, false));
   }
 
   if (msg.hasThought) {
@@ -286,7 +306,7 @@ function updateStreamingMsg(msg) {
       el.insertBefore(tb, bubble);
     } else {
       tb.querySelector('.thought-body').textContent = msg.thought;
-      tb.querySelector('summary').textContent = msg.streaming ? 'Thinking…' : 'Show thinking';
+      tb.querySelector('.th-label').textContent = msg.streaming ? 'Thinking…' : 'Thought process';
     }
   }
 
@@ -359,10 +379,27 @@ function renderModelMenu() {
       b.textContent = badge.label;
       name.appendChild(b);
     }
+    if (m.isNew) {
+      const b = document.createElement('span');
+      b.className = 'badge new';
+      b.textContent = 'New';
+      name.appendChild(b);
+    }
+    const tier = document.createElement('span');
+    tier.className = `model-tier ${m.paid ? 'paid' : 'free'}`;
+    tier.textContent = m.paid ? 'Paid' : 'Free';
+    name.appendChild(tier);
     const desc = document.createElement('span');
     desc.className = 'model-desc';
     desc.textContent = m.description || m.id;
     opt.append(name, desc);
+    const meta = [m.pricing, m.released].filter(Boolean).join(' · ');
+    if (meta) {
+      const metaEl = document.createElement('span');
+      metaEl.className = 'model-meta';
+      metaEl.textContent = meta;
+      opt.appendChild(metaEl);
+    }
     opt.onclick = () => {
       state.selectedModel = m.id;
       localStorage.setItem('gd.model', m.id);
@@ -677,7 +714,7 @@ function renderMessageNode(msg) {
   wrap.appendChild(tag);
 
   if (msg.thought) {
-    wrap.appendChild(thoughtBlockEl(msg.thought, false));
+    wrap.appendChild(thoughtBlockEl(msg.thought, msg.streaming));
   }
 
   const bubble = document.createElement('div');

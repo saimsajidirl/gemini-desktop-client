@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gemini Desktop</title>
+  <script>
+    (function () {
+      var t = localStorage.getItem('gd.theme');
+      if (t === 'light' || (!t && matchMedia('(prefers-color-scheme: light)').matches)) {
+        document.documentElement.classList.add('light');
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="vendor/highlight-dark.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <button id="menu-btn" class="icon-btn" title="Collapse menu">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+        </button>
+      </div>
+      <button id="new-chat-btn" title="New chat">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        <span>New chat</span>
+      </button>
+      <div class="recent-section">
+        <div class="recent-label">Recent</div>
+        <div id="chat-list"></div>
+      </div>
+      <div class="sidebar-footer">
+        <button id="theme-btn" class="icon-btn" title="Switch to light theme">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 1a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V2a1 1 0 0 1 1-1zm0 20a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1zM4.22 3.63a1 1 0 0 1 1.41 0l.71.7A1 1 0 1 1 4.93 5.75l-.7-.7a1 1 0 0 1 0-1.42zm14.14 14.14a1 1 0 0 1 1.41 0l.7.7a1 1 0 0 1-1.4 1.42l-.71-.7a1 1 0 0 1 0-1.42zM1 13a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2H1zm20 0a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2h-1zM4.22 20.37a1 1 0 0 1 0-1.41l.7-.71a1 1 0 0 1 1.42 1.42l-.7.7a1 1 0 0 1-1.42 0zM18.36 5.64a1 1 0 0 1 0-1.41l.7-.7a1 1 0 1 1 1.42 1.4l-.7.71a1 1 0 0 1-1.42 0z"/></svg>
+        </button>
+        <button id="settings-btn" class="footer-btn">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <span>Settings</span>
+        </button>
+      </div>
+    </aside>
+
+    <main id="main">
+      <header id="topbar">
+        <button id="model-btn" title="Choose model">
+          <span class="spark-icon"><svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9z"/></svg></span>
+          <span id="model-btn-label">Gemini</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" style="color:var(--text-faint)"><path fill="currentColor" d="M7 10l5 5 5-5H7z"/></svg>
+        </button>
+        <div id="model-menu" hidden></div>
+      </header>
+
+      <div id="chat-scroll">
+        <div id="welcome">
+          <h1 class="greeting"><span id="greeting-text">Hello</span></h1>
+          <p class="greeting-sub">How can I help you today?</p>
+          <div id="suggestions"></div>
+        </div>
+        <div id="messages"></div>
+      </div>
+
+      <div id="composer-wrap">
+        <div id="composer">
+          <div id="attachments"></div>
+          <textarea id="input" rows="1" placeholder="Ask Gemini"></textarea>
+          <div class="composer-row">
+            <div class="composer-left">
+              <button id="attach-btn" class="icon-btn" title="Upload image">
+                <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+              </button>
+              <label id="thinking-toggle" class="pill-toggle" title="Show thinking process" hidden>
+                <input type="checkbox" id="thinking-checkbox" checked />
+                <span>Thinking</span>
+              </label>
+            </div>
+            <div class="composer-right">
+              <button id="send-btn" class="icon-btn send" title="Send" disabled>
+                <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z"/></svg>
+              </button>
+              <button id="stop-btn" class="icon-btn stop" title="Stop" hidden>
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="disclaimer">Gemini can make mistakes, so double-check responses.</div>
+      </div>
+    </main>
+  </div>
+
+  <div id="settings-modal" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-title">Settings</div>
+      <label class="field-label" for="api-key-input">Gemini API key</label>
+      <input id="api-key-input" type="password" placeholder="AIza..." autocomplete="off" />
+      <div class="field-hint">Get a key at <a href="https://aistudio.google.com/apikey" id="apikey-link">aistudio.google.com/apikey</a></div>
+      <label class="field-label" for="system-prompt-input">System instructions <span class="optional">(optional)</span></label>
+      <textarea id="system-prompt-input" rows="3" placeholder="e.g. You are a concise coding assistant"></textarea>
+      <div class="modal-actions">
+        <button id="settings-cancel" class="btn">Cancel</button>
+        <button id="settings-save" class="btn primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="file-input" accept="image/*" multiple hidden />
+  <div id="toast" hidden></div>
+
+  <script src="vendor/marked.min.js"></script>
+  <script src="vendor/highlight.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
